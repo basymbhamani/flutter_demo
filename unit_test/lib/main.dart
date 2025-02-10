@@ -30,12 +30,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final FocusNode usernameFocusNode = FocusNode(); // Add FocusNode for username
+  final FocusNode usernameFocusNode = FocusNode();
   String message = '';
-  bool isLogin = true; // Track whether it's login or sign-up
-  bool isLoginFailed = false; // Track login failure state
+  bool isLogin = true;
+  bool isLoginFailed = false;
 
   void _login() async {
+    setState(() {
+      message = 'Logging in...';
+      isLoginFailed = false;
+    });
+
     bool success = await widget.loginManager.authenticate(
       usernameController.text,
       passwordController.text,
@@ -47,8 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(
           builder: (context) => HomeScreen(
             username: usernameController.text,
-            usernameController: usernameController,
-            passwordController: passwordController,
+            onLogout: _handleLogout,
           ),
         ),
       );
@@ -57,17 +61,15 @@ class _LoginScreenState extends State<LoginScreen> {
         message = 'Login Failed!';
         isLoginFailed = true;
       });
-
-      // Hide the message after 3 seconds
-      Future.delayed(Duration(seconds: 3), () {
-        setState(() {
-          isLoginFailed = false;
-        });
-      });
     }
   }
 
   void _signUp() async {
+    setState(() {
+      message = 'Signing up...';
+      isLoginFailed = false;
+    });
+
     bool success = await widget.loginManager.signUp(
       usernameController.text,
       passwordController.text,
@@ -76,20 +78,28 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       setState(() {
         message = 'Sign up successful! You can now log in.';
-        isLogin = true; // Switch back to login screen
+        isLogin = true;
+        isLoginFailed = false;
       });
 
-      // Clear the text fields after successful sign-up
       usernameController.clear();
       passwordController.clear();
-
-      // Request focus on the username field
       usernameFocusNode.requestFocus();
     } else {
       setState(() {
         message = 'Sign up failed! Username may already exist.';
+        isLoginFailed = true;
       });
     }
+  }
+
+  void _handleLogout() {
+    setState(() {
+      usernameController.clear();
+      passwordController.clear();
+      message = ''; // Clear the message after logout
+      isLoginFailed = false;
+    });
   }
 
   @override
@@ -102,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               key: Key('username_field'),
-              focusNode: usernameFocusNode, // Set the focus node
+              focusNode: usernameFocusNode,
               controller: usernameController,
               decoration: InputDecoration(labelText: 'Username'),
             ),
@@ -114,25 +124,29 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              key: Key('login_button'), // Add key for easier identification
+              key: Key('login_button'),
               onPressed: isLogin ? _login : _signUp,
               child: Text(isLogin ? 'Login' : 'Sign Up'),
             ),
             SizedBox(height: 20),
             AnimatedOpacity(
-              opacity: isLoginFailed ? 1.0 : 0.0,
+              opacity: message.isNotEmpty ? 1.0 : 0.0,
               duration: Duration(milliseconds: 500),
               child: Text(
                 message,
-                style: TextStyle(color: Colors.red, fontSize: 16),
+                style: TextStyle(
+                  color: isLoginFailed ? Colors.red : Colors.green,
+                  fontSize: 16,
+                ),
               ),
             ),
             SizedBox(height: 20),
             TextButton(
               onPressed: () {
                 setState(() {
-                  isLogin = !isLogin; // Toggle between login and sign up
-                  message = ''; // Reset message
+                  isLogin = !isLogin;
+                  message = '';
+                  isLoginFailed = false;
                 });
               },
               child: Text(isLogin ? 'Don\'t have an account? Sign Up' : 'Already have an account? Login'),
@@ -146,10 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class HomeScreen extends StatelessWidget {
   final String username;
-  final TextEditingController usernameController;
-  final TextEditingController passwordController;
+  final VoidCallback onLogout;
 
-  HomeScreen({required this.username, required this.usernameController, required this.passwordController});
+  HomeScreen({required this.username, required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
@@ -163,9 +176,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Clear the text fields and pop to login screen
-                usernameController.clear();
-                passwordController.clear();
+                onLogout();
                 Navigator.pop(context);
               },
               child: Text('Logout'),
