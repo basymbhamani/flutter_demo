@@ -101,17 +101,20 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             TextField(
+              key: Key('username_field'),
               focusNode: usernameFocusNode, // Set the focus node
               controller: usernameController,
               decoration: InputDecoration(labelText: 'Username'),
             ),
             TextField(
+              key: Key('password_field'),
               controller: passwordController,
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              key: Key('login_button'), // Add key for easier identification
               onPressed: isLogin ? _login : _signUp,
               child: Text(isLogin ? 'Login' : 'Sign Up'),
             ),
