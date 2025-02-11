@@ -17,13 +17,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          architecture: x64  # Explicit architecture
-
-      - name: Verify Project Structure
-        run: |
-          cd unit_test
-          flutter --version
-          ls -la
 
       - name: Install dependencies
         run: flutter pub get
