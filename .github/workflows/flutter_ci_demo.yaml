@@ -2,11 +2,9 @@ name: Flutter CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   test:
@@ -14,17 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: flutter-actions/setup-flutter@v1.6.0  # Verified working version
+      - name: Setup Flutter
+        uses: dart-lang/setup-flutter@v2.0.0  # Verified working version
         with:
           channel: stable
+          architecture: x64  # Explicitly specify for Windows
 
-      - name: Verify Flutter
-        run: flutter doctor -v
-
-      - name: List Directory Contents
-        run: dir
-        working-directory: unit_test  # Verify this path exists
+      - name: Verify Paths
+        run: |
+          cd unit_test
+          dir
+          flutter --version
 
       - name: Install Dependencies
         run: flutter pub get
