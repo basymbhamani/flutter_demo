@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Switch to Windows runner
     steps:
       - uses: actions/checkout@v4
       
@@ -18,10 +18,18 @@ jobs:
         with:
           flutter-version: 'stable'
 
+      - name: List Directory Contents
+        run: dir
+        working-directory: unit_test  # Check if the Flutter project is visible
+
+      - name: Check pubspec.yaml Presence
+        run: dir pubspec.yaml
+        working-directory: unit_test  # Ensure pubspec.yaml is in unit_test
+
       - name: Install Dependencies
         run: flutter pub get
-        working-directory: unit_test  # Points to the Flutter project
+        working-directory: unit_test
 
       - name: Run Tests
         run: flutter test
-        working-directory: unit_test  # Runs tests inside the Flutter project
+        working-directory: unit_test
