@@ -19,12 +19,12 @@ jobs:
           flutter-version: 'stable'  # Use the stable version unless you need dev
 
       - name: Navigate to Flutter Project
-        run: cd flutter_demo
+        run: cd unit_test
 
       - name: Install Dependencies
         run: flutter pub get
-        working-directory: flutter_demo  # Add this to specify the directory
+        working-directory: unit_test  # Add this to specify the directory
 
       - name: Run Tests
         run: flutter test
-        working-directory: flutter_demo  # Add this to specify the directory
+        working-directory: unit_test  # Add this to specify the directory
