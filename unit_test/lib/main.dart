@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: Key('password_field'),
               controller: passwordController,
               decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
+              obscureText: false,
             ),
             SizedBox(height: 20),
             ElevatedButton(
