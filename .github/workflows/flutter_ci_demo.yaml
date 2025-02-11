@@ -13,9 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dart-lang/setup-flutter@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          channel: stable  # Add Flutter channel specification
+          channel: stable
+          architecture: x64  # Explicit architecture
+
+      - name: Verify Project Structure
+        run: |
+          cd unit_test
+          flutter --version
+          ls -la
 
       - name: Install dependencies
         run: flutter pub get
