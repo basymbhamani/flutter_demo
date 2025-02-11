@@ -10,20 +10,17 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Use Windows runner
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - uses: subosito/flutter-action@v2
+
+      - name: Set up Flutter
+        uses: dart-lang/setup-flutter@v1
         with:
-          flutter-version: 'stable'  # Try with 'stable' first
-          cache: true  # Enable caching to improve performance
-
-      - name: Force Flutter Upgrade
-        run: flutter upgrade
-
-      - name: Check Flutter Version
-        run: flutter --version
+          channel: stable  # Explicitly specify the stable channel
+          
+      - name: Check Flutter Environment
+        run: flutter doctor -v
 
       - name: List Directory Contents
         run: dir
