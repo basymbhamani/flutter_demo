@@ -1,33 +1,26 @@
-name: Flutter CI
+name: Dart
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
-    branches: [main]
+    branches: [ "main" ]
 
 jobs:
-  test:
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: dart-lang/setup-flutter@v2.0.0  # Verified working version
+      - uses: dart-lang/setup-flutter@v2
         with:
-          channel: stable
-          architecture: x64  # Explicitly specify for Windows
+          channel: stable  # Add Flutter channel specification
 
-      - name: Verify Paths
-        run: |
-          cd unit_test
-          dir
-          flutter --version
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: flutter pub get
         working-directory: unit_test
 
-      - name: Run Tests
+      - name: Run tests
         run: flutter test
         working-directory: unit_test
