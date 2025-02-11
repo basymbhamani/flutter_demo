@@ -10,21 +10,24 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Switch to Windows runner
+    runs-on: windows-latest  # Use Windows runner
     steps:
       - uses: actions/checkout@v4
       
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: 'stable'  # Try with 'stable' first
+          cache: true  # Enable caching to improve performance
+
+      - name: Force Flutter Upgrade
+        run: flutter upgrade
+
+      - name: Check Flutter Version
+        run: flutter --version
 
       - name: List Directory Contents
         run: dir
-        working-directory: unit_test  # Check if the Flutter project is visible
-
-      - name: Check pubspec.yaml Presence
-        run: dir pubspec.yaml
-        working-directory: unit_test  # Ensure pubspec.yaml is in unit_test
+        working-directory: unit_test
 
       - name: Install Dependencies
         run: flutter pub get
